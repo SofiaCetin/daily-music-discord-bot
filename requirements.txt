@@ -1,8 +1,5 @@
 psycopg2
 discord
-uuid
 requests
-os
-datetime
 flask
 gunicorn
