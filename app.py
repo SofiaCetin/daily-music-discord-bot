@@ -48,7 +48,7 @@ def callback():
         response = requests.post(TOKEN_URL,data=req_body)
         token_info = response.json()
         db.add_new_refresh_token(state, token_info["refresh_token"])
-        db.add_new_token(state, token_info["access_token"], datetime.now().timestamp() + token_info["expires_in"])
+        db.add_new_token(state, token_info["access_token"], datetime.datetime.now().timestamp() + token_info["expires_in"])
         db.delete_state(state)
 
         db.conn.commit()
