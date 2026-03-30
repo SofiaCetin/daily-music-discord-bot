@@ -1,4 +1,4 @@
-import discord, app, uuid, os
+import discord, app, uuid, os, db
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -35,6 +35,13 @@ async def link(ctx):
         await ctx.send("Je t'ai envoyé en message privé le lien pour lier ton compte Spotify ! Le lien expire au bout de 2 minutes. Ne le partage à personne.")
     except discord.Forbidden:
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
+
+@bot.command()
+async def register_playlist(ctx, playlist_id):
+    user_id = await bot.fetch_user(ctx.author.id)
+    playlist = app.get_playlist(user_id, playlist_id)
+    await ctx.send(f"{playlist}")
+
 
 app.keep_alive()
 bot.run(BOT_TOKEN)

@@ -61,3 +61,11 @@ def run():
 def keep_alive():
     t = Thread(target=run)
     t.start()
+
+def get_playlist(user_id, playlist_id):
+    access_token = db.get_access_token(user_id)
+    headers = {
+        "Authorization" : f"Bearer {access_token}"
+    }
+    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items")
+    return response.json()
