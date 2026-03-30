@@ -1,0 +1,62 @@
+import requests, os, datetime
+from os.path import join, dirname
+from dotenv import load_dotenv
+from datetime import datetime
+from threading import Thread
+from flask import Flask, redirect, request, jsonify, session
+import db
+
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
+APP_SECRET = os.environ.get("APP_SECRET")
+PLAYLIST_ID = "6hLPlHPMv2H2KzK7lTYySD"
+
+REDIRECT_URI = "http://127.0.0.1:5000/callback"
+AUTH_URL = "https://accounts.spotify.com/authorize"
+TOKEN_URL = "https://accounts.spotify.com/api/token"
+API_BASE_URL = "https://api.spotify.com/v1/"
+
+app = Flask(__name__)
+app.secret_key = APP_SECRET
+
+@app.route("/callback")
+def callback():
+    if "error" in request.args:
+        return jsonify({"error": request.args["error"]})
+    
+    if not "state" in request.args:
+        return "State error: No state found"
+    
+    state = request.args["state"]
+    discord_id = db.check_state_exists(state)
+    if not discord_id:
+        return "State error: state expired or invalid"
+    
+    if "code" in request.args:
+        req_body = {
+            "code" : request.args["code"],
+            "grant_type" : "authorization_code",
+            "redirect_uri" : REDIRECT_URI,
+            "client_id" : CLIENT_ID,
+            "client_secret" : CLIENT_SECRET
+        }
+
+        response = requests.post(TOKEN_URL,data=req_body)
+        token_info = response.json()
+        db.add_new_refresh_token(state, token_info["refresh_token"])
+        db.add_new_token(state, token_info["access_token"], datetime.now().timestamp() + token_info["expires_in"])
+        db.delete_state(state)
+
+        db.conn.commit()
+
+        return "State valid"
+
+
+def run_app():
+    app.run(host="0.0.0.0", debug=False)
+
+Thread(target=run_app).start()
