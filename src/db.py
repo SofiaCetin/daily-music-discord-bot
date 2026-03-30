@@ -3,19 +3,32 @@ import os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-conn = psycopg2.connect(DATABASE_URL)
+def connect():
+    return psycopg2.connect(DATABASE_URL)
 
-cur = conn.cursor()
+def db_init():
 
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS linked_users(
+    conn = connect()
+
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS linked_users(
         discord_id TEXT PRIMARY KEY,
         state TEXT,
         access_token TEXT,
         refresh_token TEXT,
         expires_at BIGINT
         )     
-""")
+    """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+conn = connect()
+
+cur = conn.cursor()
 
 def save_state(discord_id,state):
     cur.execute("""
