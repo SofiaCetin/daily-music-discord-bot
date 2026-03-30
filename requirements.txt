@@ -1,10 +1,8 @@
 psycopg2
 discord
 uuid
-threading
 requests
 os
 datetime
-dotenv
 flask
 gunicorn
