@@ -14,7 +14,7 @@ API_BASE_URL = "https://api.spotify.com/v1/"
 app = Flask(__name__)
 app.secret_key = APP_SECRET
 
-db.dib_init()
+db.db_init()
 
 @app.route("/callback")
 def callback():
