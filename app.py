@@ -7,6 +7,7 @@ CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 APP_SECRET = os.getenv("APP_SECRET")
 PLAYLIST_ID = "6hLPlHPMv2H2KzK7lTYySD"
+PORT = os.getenv("PORT")
 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
 AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -55,7 +56,7 @@ def callback():
         return "State valid"
 
 def run():
-    app.run(host="0.0.0.0", port="8080")
+    app.run(host="0.0.0.0", port=PORT)
 
 def keep_alive():
     t = Thread(target=run)
