@@ -9,7 +9,7 @@ APP_SECRET = os.getenv("APP_SECRET")
 PLAYLIST_ID = "6hLPlHPMv2H2KzK7lTYySD"
 PORT = os.getenv("PORT")
 
-REDIRECT_URI = "http://daily-music-discord-bot.onrender.com/callback"
+REDIRECT_URI = "https://daily-music-discord-bot.onrender.com/callback"
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1/"
