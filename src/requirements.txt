@@ -8,3 +8,4 @@ os
 datetime
 dotenv
 flask
+gunicorn
