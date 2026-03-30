@@ -1,10 +1,10 @@
-import psycopg2
+import psycopg
 import os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def connect():
-    return psycopg2.connect(DATABASE_URL)
+    return psycopg.connect(DATABASE_URL)
 
 def db_init():
 
