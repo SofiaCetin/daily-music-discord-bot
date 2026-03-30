@@ -1,5 +1,8 @@
 import discord, app, uuid, os
+from dotenv import load_dotenv
 from discord.ext import commands
+
+load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -33,5 +36,5 @@ async def link(ctx):
     except discord.Forbidden:
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
 
-
+app.keep_alive()
 bot.run(BOT_TOKEN)

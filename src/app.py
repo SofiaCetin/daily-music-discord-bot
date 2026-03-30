@@ -1,5 +1,7 @@
 import requests, os, datetime, db
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
+from threading import Thread
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -15,6 +17,10 @@ app = Flask(__name__)
 app.secret_key = APP_SECRET
 
 db.db_init()
+
+@app.route('/')
+def index():
+    return "Bot is online"
 
 @app.route("/callback")
 def callback():
@@ -47,3 +53,10 @@ def callback():
         db.conn.commit()
 
         return "State valid"
+
+def run():
+    app.run(host="0.0.0.0", port="8080")
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start
