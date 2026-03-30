@@ -1,18 +1,9 @@
-import requests, os, datetime
-from os.path import join, dirname
-from dotenv import load_dotenv
-from datetime import datetime
-from threading import Thread
-from flask import Flask, redirect, request, jsonify, session
-import db
+import requests, os, datetime, db
+from flask import Flask, request, jsonify
 
-
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-
-CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
-CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
-APP_SECRET = os.environ.get("APP_SECRET")
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+APP_SECRET = os.getenv("APP_SECRET")
 PLAYLIST_ID = "6hLPlHPMv2H2KzK7lTYySD"
 
 REDIRECT_URI = "http://127.0.0.1:5000/callback"
@@ -54,9 +45,3 @@ def callback():
         db.conn.commit()
 
         return "State valid"
-
-
-def run_app():
-    app.run(host="0.0.0.0", debug=False)
-
-Thread(target=run_app).start()
