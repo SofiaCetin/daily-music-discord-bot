@@ -1,0 +1,10 @@
+psycopg2
+discord
+uuid
+discord.ext
+threading
+requests
+os
+datetime
+dotenv
+flask
