@@ -86,7 +86,7 @@ def keep_alive():
     t.start()
 
 def get_playlist(user_id, playlist_id):
-    expiration = db.get_token_expiration()
+    expiration = db.get_token_expiration(user_id)
     if expiration < datetime.datetime.now():
         refresh_token(user_id)
     access_token = db.get_access_token(user_id)
