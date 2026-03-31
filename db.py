@@ -58,16 +58,21 @@ def check_state_exists(state):
     else:
         return None
 
-def get_state_expiration(state):
+def get_token_expiration(discord_id):
     conn = connect()
     cur = conn.cursor()
     cur.execute("""
-        SELECT state_expiration
+        SELECT expires_at
         FROM linked_users
-        WHERE state = %s
-""", (state, ))
+        WHERE discord_id = %s
+""", (discord_id, ))
+    res = cur.fetchone()
     cur.close()
     conn.close()
+    if res:
+        return res[0]
+    else:
+        return None
     
 def get_refresh_token(discord_id):
     conn = connect()
