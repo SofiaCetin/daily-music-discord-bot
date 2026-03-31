@@ -51,8 +51,6 @@ def callback():
         db.add_new_token(state, token_info["access_token"], datetime.datetime.now().timestamp() + token_info["expires_in"])
         db.delete_state(state)
 
-        db.conn.commit()
-
         return "State valid"
 
 def run():
@@ -67,5 +65,5 @@ def get_playlist(user_id, playlist_id):
     headers = {
         "Authorization" : f"Bearer {access_token}"
     }
-    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items")
+    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
     return response.json()
