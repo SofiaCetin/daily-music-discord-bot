@@ -120,39 +120,39 @@ def get_access_token(discord_id):
     else:
         return None
     
-def add_new_refresh_token(state, refresh_token):
+def add_new_refresh_token(discord_id, refresh_token):
     conn = connect()
     cur = conn.cursor()
     cur.execute("""
         UPDATE linked_users
         SET refresh_token = %s
         WHERE state = %s
-""",(refresh_token, state))
+""",(refresh_token, discord_id))
     conn.commit()
     cur.close()
     conn.close()
     
     
-def add_new_token(state, access_token, expires_at):
+def add_new_token(discord_id, access_token, expires_at):
     conn = connect()
     cur = conn.cursor()
     cur.execute("""
         UPDATE linked_users
         SET access_token = %s, expires_at = %s
         WHERE state = %s          
-    """, (access_token ,expires_at ,state))
+    """, (access_token ,expires_at ,discord_id))
     conn.commit()
     cur.close()
     conn.close()
 
-def delete_state(state):
+def delete_state(discord_id):
     conn = connect()
     cur = conn.cursor()
     cur.execute("""
         UPDATE linked_users
         SET state = NULL
-        WHERE state = %s
-""", (state, ))
+        WHERE discord_id = %s
+""", (discord_id, ))
     conn.commit()
     cur.close()
     conn.close()
