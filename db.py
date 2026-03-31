@@ -40,23 +40,6 @@ def save_state(discord_id,state):
     cur.close()
     conn.close()
 
-def check_user_state(discord_id,state):
-    conn = connect()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT state 
-        FROM linked_users 
-        WHERE discord_id = %s
-    """, (discord_id,))
-    res = cur.fetchone()
-    cur.close()
-    conn.close()
-    if res[0] == state:
-        return True
-    else:
-        return False
-
 def check_state_exists(state):
     conn = connect()
     cur = conn.cursor()
@@ -71,10 +54,8 @@ def check_state_exists(state):
     conn.close()
     if ligne:
         discord_id = ligne[0]
-        print(f"Le state existe pour l'ID discord {discord_id}")
         return discord_id
     else:
-        print("Le state n'existe pas")
         return None
 
 def get_state_expiration(state):

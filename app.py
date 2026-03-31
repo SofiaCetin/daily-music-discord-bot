@@ -52,6 +52,8 @@ def callback():
         db.delete_state(discord_id)
 
         return "State valid"
+    else:
+        return "No body"
 
 def run():
     app.run(host="0.0.0.0", port=PORT)
