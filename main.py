@@ -42,7 +42,7 @@ async def register_playlist(ctx, playlist_id):
     user_id = await bot.fetch_user(ctx.author.id)
     user_id_str = str(user_id)
     playlist = app.get_playlist(user_id_str, playlist_id)
-    await ctx.send(f"{playlist["items"]}")
+    await ctx.send(playlist)
 
 
 app.keep_alive()

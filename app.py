@@ -66,4 +66,5 @@ def get_playlist(user_id, playlist_id):
         "Authorization" : f"Bearer {access_token}"
     }
     response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
-    return response.json()
+    data = response.json()
+    return data["total"]
