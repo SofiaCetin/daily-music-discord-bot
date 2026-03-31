@@ -19,6 +19,7 @@ async def on_ready():
 @bot.command()
 async def link(ctx):
     user_id = await bot.fetch_user(ctx.author.id)
+    user_id_str = str(user_id)
     try:
         state = str(uuid.uuid4())
         scope = 'user-read-private user-library-read playlist-read-private playlist-read-collaborative'
@@ -30,7 +31,7 @@ async def link(ctx):
             "state" : state
         }
         auth_URL = f"{app.AUTH_URL}?{app.urllib.parse.urlencode(params)}"
-        app.db.save_state(ctx.author.id,state)
+        app.db.save_state(user_id_str,state)
         await user_id.send(f"Voici ton lien, ne le partage à personne: {auth_URL}")
         await ctx.send("Je t'ai envoyé en message privé le lien pour lier ton compte Spotify ! Le lien expire au bout de 2 minutes. Ne le partage à personne.")
     except discord.Forbidden:
@@ -39,7 +40,8 @@ async def link(ctx):
 @bot.command()
 async def register_playlist(ctx, playlist_id):
     user_id = await bot.fetch_user(ctx.author.id)
-    playlist = app.get_playlist(user_id, playlist_id)
+    user_id_str = str(user_id)
+    playlist = app.get_playlist(user_id_str, playlist_id)
     await ctx.send(f"{playlist}")
 
 
