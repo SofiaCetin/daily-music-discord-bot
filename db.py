@@ -126,7 +126,7 @@ def add_new_refresh_token(discord_id, refresh_token):
     cur.execute("""
         UPDATE linked_users
         SET refresh_token = %s
-        WHERE state = %s
+        WHERE discord_id = %s
 """,(refresh_token, discord_id))
     conn.commit()
     cur.close()
@@ -139,7 +139,7 @@ def add_new_token(discord_id, access_token, expires_at):
     cur.execute("""
         UPDATE linked_users
         SET access_token = %s, expires_at = %s
-        WHERE state = %s          
+        WHERE discord_id = %s          
     """, (access_token ,expires_at ,discord_id))
     conn.commit()
     cur.close()
