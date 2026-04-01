@@ -1,4 +1,4 @@
-import requests, os, datetime, db, urllib, base64
+import requests, os, datetime, db, urllib, base64, random
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from threading import Thread
@@ -85,7 +85,7 @@ def keep_alive():
     t = Thread(target=run)
     t.start()
 
-def get_playlist(user_id, playlist_id):
+def get_random_track(user_id, playlist_id):
     expiration = db.get_token_expiration(user_id)
     if expiration < datetime.datetime.now().timestamp():
         refresh_token(user_id)
@@ -98,4 +98,7 @@ def get_playlist(user_id, playlist_id):
     if "error" in data.keys():
         return data
     else:
-        return data["total"]
+        playlist_lenght = int(data["total"])
+        track_number = random.randint(1,playlist_lenght)
+        chosen_track = data["items"][track_number]["name"]
+        return chosen_track
