@@ -67,7 +67,7 @@ def refresh_token(user_id):
     data = base64.b64encode(encoded_client_id + b':' + encoded_client_secret)
     headers = {
         "Content-Type" : "application/x-www-form-urlencoded",
-        "Authorization" : "Basic" + data
+        "Authorization" : "Basic " + data.decode()
     }
     response = requests.post(TOKEN_URL, data=req_body, headers=headers)
     new_token_info = response.json()
