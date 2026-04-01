@@ -98,4 +98,4 @@ def get_playlist(user_id, playlist_id):
     if "error" in data.keys():
         return data
     else:
-        return data["href"]
+        return data["total"]
