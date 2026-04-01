@@ -47,8 +47,8 @@ async def register_playlist(ctx, playlist_id):
     user_id_str = str(user_id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
-        playlist = app.get_playlist(user_id_str, playlist_id)
-        await ctx.send(playlist)
+        track = app.get_random_track(user_id_str, playlist_id)
+        await ctx.send(track)
     else:
         await ctx.send("Ton compte Spotify n'est pas lié au bot. Tape la commande !link pour le lier.")
 
