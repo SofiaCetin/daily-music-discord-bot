@@ -99,6 +99,6 @@ def get_random_track(user_id, playlist_id):
         return data
     else:
         playlist_lenght = int(data["total"])
-        track_number = random.randint(1,playlist_lenght)
+        track_number = random.randint(0,playlist_lenght - 1)
         chosen_track = data["items"][track_number]["name"]
         return chosen_track
