@@ -75,7 +75,7 @@ def refresh_token(user_id):
         return new_token_info
     else:
         expires_at = datetime.datetime.now().timestamp() + new_token_info["expires_in"]
-        access_token = new_token_info["acess_token"]
+        access_token = new_token_info["access_token"]
         db.add_new_token(user_id,access_token,expires_at)
 
 def run():
