@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db
+import discord, app, uuid, os, db, json
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -47,11 +47,29 @@ async def register_playlist(ctx, playlist_id):
     user_id_str = str(user_id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
-        track = app.get_random_track(user_id_str, playlist_id)
-        await ctx.send(track)
+        playlist = app.get_random_track(user_id_str, playlist_id)
+        if "error" in playlist.keys():
+            await ctx.send(playlist)
+        else:
+            playlist_length = int(playlist["total"])
+            indice = playlist_length
+            if playlist_length > 20:
+                indice = 20
+            random_item = app.random.randint(0,indice - 1)
+            await ctx.send(playlist["items"][random_item]["item"]["name"])
     else:
         await ctx.send("Ton compte Spotify n'est pas lié au bot. Tape la commande !link pour le lier.")
 
-
+@bot.command()
+async def send_json(ctx, playlist_id):
+    user_id = await bot.fetch_user(ctx.author.id)
+    user_id_str = str(user_id)
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
+        json_data = app.get_random_track(user_id_str, playlist_id)
+        with open("data.json", 'w',encoding="utf-8") as file:
+            json.dump(json_data, file, ensure_ascii=False, indent=4)
+        await ctx.send(file=discord.File("data.json"))
+                  
 app.keep_alive()
 bot.run(BOT_TOKEN)

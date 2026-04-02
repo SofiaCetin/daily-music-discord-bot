@@ -95,9 +95,4 @@ def get_random_track(user_id, playlist_id):
     }
     response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
     data = response.json()
-    if "error" in data.keys():
-        return data
-    else:
-        playlist_length = int(data["total"])
-        random_item = random.randint(0,playlist_length - 1)
-        return data["items"][random_item]["item"]["name"]
+    return data
