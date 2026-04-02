@@ -60,16 +60,6 @@ async def register_playlist(ctx, playlist_id):
     else:
         await ctx.send("Ton compte Spotify n'est pas lié au bot. Tape la commande !link pour le lier.")
 
-@bot.command()
-async def send_json(ctx, playlist_id):
-    user_id = await bot.fetch_user(ctx.author.id)
-    user_id_str = str(user_id)
-    access_token = db.get_access_token(user_id_str)
-    if access_token:
-        json_data = app.get_random_track(user_id_str, playlist_id)
-        with open("data.json", 'w',encoding="utf-8") as file:
-            json.dump(json_data, file, ensure_ascii=False, indent=4)
-        await ctx.send(file=discord.File("data.json"))
 
 @bot.command()
 async def playlist_length(ctx, playlist_id):
@@ -78,7 +68,7 @@ async def playlist_length(ctx, playlist_id):
     access_token = db.get_access_token(user_id_str)
     if access_token:
         total = app.get_random_track(user_id_str, playlist_id)
-        await ctx.send(total["total"])
+        await ctx.send(total)
                   
 app.keep_alive()
 bot.run(BOT_TOKEN)
