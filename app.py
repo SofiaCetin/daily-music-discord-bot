@@ -98,7 +98,5 @@ def get_random_track(user_id, playlist_id):
     if "error" in data.keys():
         return data
     else:
-        playlist_lenght = int(data["total"])
-        track_number = random.randint(3,3 + playlist_lenght)
-        chosen_track = data["items"][track_number]["name"]
-        return chosen_track
+        playlist_length = int(data["total"])
+        return playlist_length
