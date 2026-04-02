@@ -102,6 +102,6 @@ def get_random_track(user_id, playlist_id):
         elif status == 401:
             return "Token expiré. Ce problème peut survenir lors d'une erreur d'authentification ou de rafraîchissement du token."
     else:
-        playlist_length = str(data["total"])
+        playlist_length = int(data["total"])
         random_item = random.randint(0,playlist_length - 1)
         return data["items"][random_item]["item"]["name"]
