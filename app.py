@@ -96,11 +96,7 @@ def get_random_track(user_id, playlist_id):
     response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
     data = response.json()
     if "error" in data.keys():
-        status = data["error"]["status"]
-        if status == 403:
-            return "Vous n'êtes propriétaire ou collaborateur de la playlist."
-        elif status == 401:
-            return "Token expiré. Ce problème peut survenir lors d'une erreur d'authentification ou de rafraîchissement du token."
+        return data
     else:
         playlist_length = int(data["total"])
         random_item = random.randint(0,playlist_length - 1)
