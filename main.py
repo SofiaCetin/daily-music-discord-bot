@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db
+import discord, app, uuid, os, db, json
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -48,7 +48,9 @@ async def register_playlist(ctx, playlist_id):
     access_token = db.get_access_token(user_id_str)
     if access_token:
         track = app.get_random_track(user_id_str, playlist_id)
-        await ctx.send(track)
+        with open("data.json", "w", encoding="utf-8") as file:
+            json.dump(track, file, ensure_ascii=False, indent=4)
+        await ctx.send(file = discord.File("data.json"))
     else:
         await ctx.send("Ton compte Spotify n'est pas lié au bot. Tape la commande !link pour le lier.")
 
