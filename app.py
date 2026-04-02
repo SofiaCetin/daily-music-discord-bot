@@ -1,5 +1,4 @@
 import requests, os, datetime, db, urllib, base64, random
-from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from threading import Thread
 
