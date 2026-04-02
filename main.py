@@ -78,7 +78,7 @@ async def playlist_length(ctx, playlist_id):
     access_token = db.get_access_token(user_id_str)
     if access_token:
         total = app.get_random_track(user_id_str, playlist_id)
-        await ctx.send(total)
+        await ctx.send(total["total"])
                   
 app.keep_alive()
 bot.run(BOT_TOKEN)
