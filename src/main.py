@@ -47,3 +47,5 @@ async def random_track(ctx, playlist_id):
     if access_token:
         total = spotify.get_random_track(user_id_str, playlist_id)
         await ctx.send(total)
+    
+bot.run(BOT_TOKEN)
