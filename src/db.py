@@ -1,10 +1,10 @@
 import psycopg2
 import os
 
-# DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def connect():
-    return psycopg2.connect("dbname='discord-bot' user='postgres' host='localhost' port='5433' password='2006'")
+    return psycopg2.connect(DATABASE_URL)
 
 def db_init():
 
