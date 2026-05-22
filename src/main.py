@@ -71,6 +71,6 @@ async def random_track(ctx, playlist_id):
         await ctx.send(total)
                   
 def init_app():
-    app.create_app()
+    return app.create_app()
 
 bot.run(BOT_TOKEN)
