@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db, json, threading
+import discord, app, uuid, os, db, spotify
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -18,8 +18,7 @@ async def on_ready():
 
 @bot.command()
 async def link(ctx):
-    user_id = await bot.fetch_user(ctx.author.id)
-    user_id_str = str(user_id)
+    user_id_str = str(ctx.author.id)
     try:
         access_token = db.get_access_token(user_id_str)
         if access_token:
@@ -42,35 +41,9 @@ async def link(ctx):
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
 
 @bot.command()
-async def register_playlist(ctx, playlist_id):
-    user_id = await bot.fetch_user(ctx.author.id)
-    user_id_str = str(user_id)
-    access_token = db.get_access_token(user_id_str)
-    if access_token:
-        playlist = app.get_random_track(user_id_str, playlist_id)
-        if "error" in playlist.keys():
-            await ctx.send(playlist)
-        else:
-            playlist_length = int(playlist["total"])
-            indice = playlist_length
-            if playlist_length > 20:
-                indice = 20
-            random_item = app.random.randint(0,indice - 1)
-            await ctx.send(playlist["items"][random_item]["item"]["name"])
-    else:
-        await ctx.send("Ton compte Spotify n'est pas lié au bot. Tape la commande !link pour le lier.")
-
-
-@bot.command()
 async def random_track(ctx, playlist_id):
-    user_id = await bot.fetch_user(ctx.author.id)
-    user_id_str = str(user_id)
+    user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
-        total = app.get_random_track(user_id_str, playlist_id)
+        total = spotify.get_random_track(user_id_str, playlist_id)
         await ctx.send(total)
-                  
-def init_app():
-    bot_thread = threading.Thread(target=lambda: bot.run(BOT_TOKEN), daemon=True)
-    bot_thread.start()
-    return app.create_app()
