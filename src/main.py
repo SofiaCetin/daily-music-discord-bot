@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db, spotify
+import discord, os, db, spotify
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -13,6 +13,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 @bot.event
 async def on_ready():
+    db.db_init()
     print(f'Bot en ligne: {bot.user}')
 
 
@@ -38,5 +39,4 @@ async def random_track(ctx, playlist_id):
         total = spotify.get_random_track(user_id_str, playlist_id)
         await ctx.send(total)
 
-db.db_init()
 bot.run(BOT_TOKEN)
