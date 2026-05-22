@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db, json
+import discord, app, uuid, os, db, json, threading
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -71,6 +71,6 @@ async def random_track(ctx, playlist_id):
         await ctx.send(total)
                   
 def init_app():
+    bot_thread = threading.Thread(target=lambda: bot.run(BOT_TOKEN), daemon=True)
+    bot_thread.start()
     return app.create_app()
-
-bot.run(BOT_TOKEN)
