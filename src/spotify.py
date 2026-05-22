@@ -1,10 +1,26 @@
-import random, requests, db, datetime, os, base64
+import random, requests, db, datetime, os, base64, urllib, uuid
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 
+REDIRECT_URI = "https://flask-production-92a6.up.railway.app/callback"
 API_BASE_URL = "https://api.spotify.com/v1/"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
+AUTH_URL = "https://accounts.spotify.com/authorize"
+
+def link_user(user_id):
+    state = str(uuid.uuid4())
+    scope = 'user-read-private user-library-read playlist-read-private playlist-read-collaborative'
+    params = {
+        "client_id" : CLIENT_ID,
+        "response_type" : "code",
+        "scope" : scope,
+        "redirect_uri" : REDIRECT_URI,
+        "state" : state
+        }
+    auth_URL = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+    db.save_state(user_id,state)
+    return auth_URL
 
 def get_random_track(user_id, playlist_id):
     expiration = db.get_token_expiration(user_id)
