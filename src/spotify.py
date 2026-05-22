@@ -28,19 +28,30 @@ def get_random_track(user_id, playlist_id):
         refresh_token(user_id)
     access_token = db.get_access_token(user_id)
     headers = {
-        "Authorization" : f"Bearer {access_token}"
+        "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
-    print(response.status_code)
-    print(response.text)
-    if response.status_code != 200:
-        return {"error": f"Spotify API error: {response.status_code}"}
-    else:
-        data = response.json()
-        playlist_length = data["total"]
-        rand_i = random.randint(0,playlist_length - 1)
-        track_link = data["items"][rand_i]["item"]["external_urls"]["spotify"]
-        return track_link
+    
+    response = requests.get(
+        API_BASE_URL + f"playlists/{playlist_id}/items?limit=1",
+        headers=headers
+    )
+
+    data = response.json()
+
+    total = data["total"]
+
+    rand_i = random.randint(0, total - 1)
+
+    response = requests.get(
+        API_BASE_URL + f"playlists/{playlist_id}/items?limit=1&offset={rand_i}",
+        headers=headers
+    )
+
+    data = response.json()
+
+    track = data["items"][0]["item"]["external_urls"]["spotify"]
+
+    return track
 
 def refresh_token(user_id):
     refresh_token = db.get_refresh_token(user_id)
