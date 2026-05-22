@@ -31,10 +31,10 @@ def get_random_track(user_id, playlist_id):
         "Authorization" : f"Bearer {access_token}"
     }
     response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
-    data = response.json()
-    if "error" in data.keys():
-        return data
+    if response.status_code != 200:
+        return {"error": f"Spotify API error: {response.status_code}"}
     else:
+        data = response.json()
         playlist_length = data["total"]
         rand_i = random.randint(0,playlist_length - 1)
         track_link = data["items"][rand_i]["item"]["external_urls"]["spotify"]
@@ -55,10 +55,10 @@ def refresh_token(user_id):
         "Authorization" : "Basic " + data.decode()
     }
     response = requests.post(TOKEN_URL, data=req_body, headers=headers)
-    new_token_info = response.json()
-    if "error" in new_token_info:
-        return new_token_info
+    if response.status_code != 200:
+        return {"error": f"Spotify API error: {response.status_code}"}
     else:
+        new_token_info = response.json()
         expires_at = datetime.datetime.now().timestamp() + new_token_info["expires_in"]
         access_token = new_token_info["access_token"]
         db.add_new_token(user_id,access_token,expires_at)
