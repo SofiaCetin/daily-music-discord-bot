@@ -13,7 +13,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'We have logged in as {bot.user}')
+    print(f'Bot en ligne: {bot.user}')
 
 
 @bot.command()
@@ -62,7 +62,7 @@ async def register_playlist(ctx, playlist_id):
 
 
 @bot.command()
-async def playlist_length(ctx, playlist_id):
+async def random_track(ctx, playlist_id):
     user_id = await bot.fetch_user(ctx.author.id)
     user_id_str = str(user_id)
     access_token = db.get_access_token(user_id_str)
@@ -70,5 +70,7 @@ async def playlist_length(ctx, playlist_id):
         total = app.get_random_track(user_id_str, playlist_id)
         await ctx.send(total)
                   
-app.keep_alive()
+def init_app():
+    app.create_app()
+
 bot.run(BOT_TOKEN)
