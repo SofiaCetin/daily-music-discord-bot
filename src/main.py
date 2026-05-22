@@ -1,4 +1,4 @@
-import discord, app, uuid, os, db, spotify
+import discord, app, uuid, os, db, spotify, threading
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -38,5 +38,17 @@ async def random_track(ctx, playlist_id):
         total = spotify.get_random_track(user_id_str, playlist_id)
         await ctx.send(total)
 
-db.db_init()
-bot.run(BOT_TOKEN)
+def init_app():
+    def run_bot():
+        try:
+            print("Bot thread starting...")
+            bot.run(BOT_TOKEN)
+        except Exception as e:
+            print(f"Bot error: {e}")
+            import traceback
+            traceback.print_exc()
+
+    bot_thread = threading.Thread(target=run_bot, daemon=True)
+    bot_thread.start()
+    print("Bot thread started in background")
+    return app.create_app()
