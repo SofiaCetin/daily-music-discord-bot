@@ -63,6 +63,8 @@ def create_app():
             return "State valid"
         else:
             return "No body"
+    
+    return app
         
 def refresh_token(user_id):
     refresh_token = db.get_refresh_token(user_id)
