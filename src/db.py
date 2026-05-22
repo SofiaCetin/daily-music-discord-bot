@@ -117,7 +117,21 @@ def add_new_refresh_token(discord_id, refresh_token):
     conn.commit()
     cur.close()
     conn.close()
-    
+
+def save_tokens(discord_id, refresh_token, access_token, expires_at):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO linked_users (discord_id, refresh_token, access_token, expires_at)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT(discord_id) DO UPDATE SET 
+            refresh_token = excluded.refresh_token,
+            access_token = excluded.access_token,
+            expires_at = excluded.expires_at
+    """, (discord_id, refresh_token, access_token, expires_at))
+    conn.commit()
+    cur.close()
+    conn.close()
     
 def add_new_token(discord_id, access_token, expires_at):
     conn = connect()
