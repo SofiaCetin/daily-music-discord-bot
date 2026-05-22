@@ -25,7 +25,7 @@ async def link(ctx):
             await ctx.send("Ton compte Spotify est déjà lié au bot.")
         else:
             auth_URL = spotify.link_user(user_id_str)
-            await ctx.author.id.send(f"Voici ton lien, ne le partage à personne: {auth_URL}")
+            await ctx.author.send(f"Voici ton lien, ne le partage à personne: {auth_URL}")
             await ctx.send("Je t'ai envoyé en message privé le lien pour lier ton compte Spotify ! Le lien expire au bout de 2 minutes. Ne le partage à personne.")
     except discord.Forbidden:
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
