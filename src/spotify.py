@@ -31,6 +31,8 @@ def get_random_track(user_id, playlist_id):
         "Authorization" : f"Bearer {access_token}"
     }
     response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/items", headers=headers)
+    print(response.status_code)
+    print(response.json())
     if response.status_code != 200:
         return {"error": f"Spotify API error: {response.status_code}"}
     else:

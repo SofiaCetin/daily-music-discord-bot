@@ -10,7 +10,6 @@ CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 APP_SECRET = os.getenv("APP_SECRET")
 PORT = os.getenv("PORT")
-PLAYLIST_ID = "6hLPlHPMv2H2KzK7lTYySD"
 
 # Liens
 
