@@ -3,7 +3,7 @@ import random, requests, db, datetime, os, base64, urllib, uuid
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 
-REDIRECT_URI = "https://flask-production-92a6.up.railway.app/callback"
+REDIRECT_URL = os.getenv("REDIRECT_URL")
 API_BASE_URL = "https://api.spotify.com/v1/"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -15,7 +15,7 @@ def link_user(user_id):
         "client_id" : CLIENT_ID,
         "response_type" : "code",
         "scope" : scope,
-        "redirect_uri" : REDIRECT_URI,
+        "redirect_uri" : REDIRECT_URL,
         "state" : state
         }
     auth_URL = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
