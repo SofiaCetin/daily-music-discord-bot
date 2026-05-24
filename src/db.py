@@ -18,6 +18,7 @@ def db_init():
         state TEXT,
         access_token TEXT,
         refresh_token TEXT,
+        playlist_id TEXT,
         expires_at BIGINT
         )     
     """)
@@ -139,6 +140,56 @@ def delete_state(discord_id):
         SET state = NULL
         WHERE discord_id = %s
 """, (discord_id, ))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def save_playlist(discord_id, playlist_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE linked_users
+        SET playlist_id = COALESCE(playlist_id, %s)
+        WHERE discord_id = %s
+""", (discord_id, playlist_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def check_if_playlist(discord_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT playlist_id
+        FROM linked_users
+        WHERE discord_id = %s
+    """, (discord_id))
+    res = cur.fetchone()
+    cur.close()
+    conn.close()
+    return res
+
+
+def clear_playlist(discord_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE linked_users
+        SET playlist_id = NULL
+        WHERE discord_id = %s
+    """, (discord_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def replace_playlist(discord_id, playlist_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE linked_users
+        SET playlist_id = %s
+        WHERE discord_id = %s
+    """, (discord_id, playlist_id))
     conn.commit()
     cur.close()
     conn.close()

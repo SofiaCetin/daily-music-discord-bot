@@ -13,7 +13,7 @@ PORT = os.getenv("PORT")
 
 # Liens
 
-REDIRECT_URI = "https://flask-production-92a6.up.railway.app/callback"
+REDIRECT_URL = os.getenv("REDIRECT_URL")
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 
@@ -45,7 +45,7 @@ def callback():
         req_body = {
             "code" : request.args["code"],
             "grant_type" : "authorization_code",
-            "redirect_uri" : REDIRECT_URI,
+            "redirect_uri" : REDIRECT_URL,
             "client_id" : CLIENT_ID,
             "client_secret" : CLIENT_SECRET
         }

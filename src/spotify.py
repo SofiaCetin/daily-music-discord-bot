@@ -22,7 +22,7 @@ def link_user(user_id):
     db.save_state(user_id,state)
     return auth_URL
 
-def get_random_track(user_id, playlist_id):
+def check_playlist(user_id, playlist_id):
     expiration = db.get_token_expiration(user_id)
     if expiration < datetime.datetime.now().timestamp():
         refresh_token(user_id)
@@ -38,12 +38,36 @@ def get_random_track(user_id, playlist_id):
 
     data = response.json()
 
+    if len(data) == 0 or "error" in data:
+        return False
+    else:
+        return True
+
+def get_random_track(user_id):
+    playlist = db.check_if_playlist(user_id)
+    if not playlist:
+        return None
+    expiration = db.get_token_expiration(user_id)
+    if expiration < datetime.datetime.now().timestamp():
+        refresh_token(user_id)
+    access_token = db.get_access_token(user_id)
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    
+    response = requests.get(
+        API_BASE_URL + f"playlists/{playlist}/items?limit=1",
+        headers=headers
+    )
+
+    data = response.json()
+
     total = data["total"]
 
     rand_i = random.randint(0, total - 1)
 
     response = requests.get(
-        API_BASE_URL + f"playlists/{playlist_id}/items?limit=1&offset={rand_i}",
+        API_BASE_URL + f"playlists/{playlist}/items?limit=1&offset={rand_i}",
         headers=headers
     )
 

@@ -32,11 +32,64 @@ async def link(ctx):
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
 
 @bot.command()
-async def random_track(ctx, playlist_id):
+async def register_playlist(ctx, playlist_id):
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
-        total = spotify.get_random_track(user_id_str, playlist_id)
-        await ctx.send(total)
+        if db.check_if_playlist(user_id_str):
+            await ctx.send("Tu as déjà enregistré une playlist. Si tu veux la changer, fais la commande !change_playlist <PLAYLIST_ID>")
+        else:
+            db.save_playlist(user_id_str, playlist_id)
+            await ctx.send("Ta playlist a bien été enregistrée")
+    else:
+        await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
+
+@bot.command()
+async def change_playlist(ctx, playlist_id):
+    user_id_str = str(ctx.author.id)
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
+        if spotify.check_playlist(user_id_str, playlist_id):
+            db.replace_playlist(user_id_str, playlist_id)
+            await ctx.send("Le changement de playlist a bien été pris en compte.")
+        else:
+            await ctx.send("Requête API invalide. Tu dois mettre une playlist qui t'appartient.")
+    else:
+        await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
+
+@bot.command()
+async def my_playlist_info(ctx):
+    user_id_str = str(ctx.author.id)
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
+        playlist = db.check_if_playlist(user_id_str)
+        if playlist:
+            await ctx.send(f"L'ID de ta playlist enregistrée est {playlist}")
+        else:
+            await ctx.send("Aucune playlist enregistrée.")
+
+@bot.command()
+async def remove_playlist(ctx):
+    user_id_str = str(ctx.author.id)
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
+        if db.check_if_playlist(user_id_str):
+            db.clear_playlist(user_id_str)
+            await ctx.send("Ta playlist a bien été supprimée.")
+        else:
+            await ctx.send("Aucune playlist enregistrée.")
+    
+@bot.command()
+async def random_track(ctx):
+    user_id_str = str(ctx.author.id)
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
+        track = spotify.get_random_track(user_id_str)
+        if not track:
+            await ctx.send("Aucune playlist enregistrée.")
+        else:
+            await ctx.send(track)
+    else:
+        await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
 
 bot.run(BOT_TOKEN)
