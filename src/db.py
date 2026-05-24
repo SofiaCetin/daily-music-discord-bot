@@ -149,7 +149,7 @@ def save_playlist(discord_id, playlist_id):
     cur = conn.cursor()
     cur.execute("""
         UPDATE linked_users
-        SET playlist_id = IFNULL(playlist_id, %s)
+        SET playlist_id = %s
         WHERE discord_id = %s
 """, (discord_id, playlist_id))
     conn.commit()
