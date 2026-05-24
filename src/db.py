@@ -163,7 +163,7 @@ def check_if_playlist(discord_id):
         SELECT playlist_id
         FROM linked_users
         WHERE discord_id = %s
-    """, (discord_id))
+    """, (discord_id, ))
     res = cur.fetchone()
     cur.close()
     conn.close()
@@ -179,7 +179,7 @@ def clear_playlist(discord_id):
         UPDATE linked_users
         SET playlist_id = NULL
         WHERE discord_id = %s
-    """, (discord_id))
+    """, (discord_id, ))
     conn.commit()
     cur.close()
     conn.close()
