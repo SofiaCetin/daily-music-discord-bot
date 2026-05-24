@@ -151,7 +151,7 @@ def save_playlist(discord_id, playlist_id):
         UPDATE linked_users
         SET playlist_id = %s
         WHERE discord_id = %s
-""", (discord_id, playlist_id))
+""", (playlist_id, discord_id))
     conn.commit()
     cur.close()
     conn.close()
@@ -191,7 +191,7 @@ def replace_playlist(discord_id, playlist_id):
         UPDATE linked_users
         SET playlist_id = %s
         WHERE discord_id = %s
-    """, (discord_id, playlist_id))
+    """, (playlist_id, discord_id))
     conn.commit()
     cur.close()
     conn.close()

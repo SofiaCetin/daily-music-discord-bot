@@ -39,8 +39,11 @@ async def register_playlist(ctx, playlist_id):
         if db.check_if_playlist(user_id_str):
             await ctx.send("Tu as déjà enregistré une playlist. Si tu veux la changer, fais la commande !change_playlist <PLAYLIST_ID>")
         else:
-            db.save_playlist(user_id_str, playlist_id)
-            await ctx.send("Ta playlist a bien été enregistrée")
+            if spotify.check_playlist(user_id_str, playlist_id):
+                db.save_playlist(user_id_str, playlist_id)
+                await ctx.send("Ta playlist a bien été enregistrée")
+            else:
+                await ctx.send("Requête API invalide. Tu dois mettre une playlist qui t'appartient.")
     else:
         await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
 
