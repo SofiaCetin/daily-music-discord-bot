@@ -167,8 +167,10 @@ def check_if_playlist(discord_id):
     res = cur.fetchone()
     cur.close()
     conn.close()
-    return res
-
+    if res:
+        return res[0]
+    else:
+        return None
 
 def clear_playlist(discord_id):
     conn = connect()
