@@ -1,4 +1,5 @@
-import discord, os, db, spotify, datetime
+import discord, os, db, spotify
+from datetime import datetime
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
@@ -28,7 +29,7 @@ async def daily_track():
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
     now = datetime.now(TIME_ZONE)
-    if now.hour == 5 and now.hour == 37:
+    if now.hour == 5 and now.hour == 41:
         await daily_track()
 
 
