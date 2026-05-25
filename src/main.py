@@ -2,7 +2,7 @@ import discord, os, db, spotify
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
-from discord.ext import commands, tasks, has_permissions, CheckFailure
+from discord.ext import commands, tasks, permissions, CheckFailure
 
 load_dotenv()
 
@@ -124,7 +124,7 @@ async def random_track(ctx):
         await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
         
 @bot.command()
-@has_permissions(administrator=True)
+@permissions(administrator=True)
 async def change_time(ctx, hours, minutes):
     try:
         if 0 < hours < 24 and 0 < minutes < 59:
