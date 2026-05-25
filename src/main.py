@@ -1,5 +1,5 @@
-import discord, os, db, spotify
-from datetime import time
+import discord, os, db, spotify, datetime
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 
@@ -7,6 +7,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_TO_SEND_DAILY = os.getenv("CHANNEL_ID")
+TIME_ZONE = ZoneInfo("Europe/Paris")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,9 +25,11 @@ async def daily_track():
     return None
 
 
-@tasks.loop(time=time(hour=5, minute=28))
+@tasks.loop(minutes=1)
 async def check_scheduled_time():
-    await daily_track()
+    now = datetime.now(TIME_ZONE)
+    if now.hour == 5 and now.hour == 37:
+        await daily_track()
 
 
 @bot.event
