@@ -200,7 +200,7 @@ def select_random_w_playlist():
     conn = connect()
     cur = conn.cursor()
     cur.execute("""
-        SELECT * 
+        SELECT discord_id
         FROM linked_users
         WHERE playlist_id IS NOT null
         ORDER BY RANDOM() LIMIT 1

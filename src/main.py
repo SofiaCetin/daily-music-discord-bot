@@ -18,10 +18,9 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 async def daily_track():
     channel = bot.get_channel(CHANNEL_TO_SEND_DAILY)
-    random_user = db.select_random_w_playlist()
-    if random_user:
-        random_user_id = random_user[0]
-        random_track = spotify.get_random_track(random_user_id)
+    random_user_id = db.select_random_w_playlist()
+    random_track = spotify.get_random_track(random_user_id)
+    if random_user_id and random_track:
         await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}")
     return None
 
@@ -29,7 +28,7 @@ async def daily_track():
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
     now = datetime.now(TIME_ZONE)
-    if now.hour == 5 and now.minute == 53:
+    if now.hour == 5 and now.minute == 58:
         await daily_track()
 
 
