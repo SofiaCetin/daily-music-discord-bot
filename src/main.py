@@ -1,4 +1,5 @@
-import discord, os, db, spotify, time
+import discord, os, db, spotify
+from datetime import time
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 
@@ -23,7 +24,7 @@ async def daily_track():
     return None
 
 
-@tasks.loop(time=time.time(hour=5, minute=24))
+@tasks.loop(time=time(hour=5, minute=25))
 async def check_scheduled_time():
     await daily_track()
 
