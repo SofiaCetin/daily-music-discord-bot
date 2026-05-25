@@ -195,3 +195,20 @@ def replace_playlist(discord_id, playlist_id):
     conn.commit()
     cur.close()
     conn.close()
+
+def select_random_w_playlist():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT * 
+        FROM linked_users
+        WHERE playlist_id IS NOT null
+        ORDER BY RANDOM() LIMIT 1
+    """)
+    res = cur.fetchone()
+    cur.close()
+    conn.close()
+    if res:
+        return res[0]
+    else:
+        return None
