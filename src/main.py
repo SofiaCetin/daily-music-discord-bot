@@ -127,17 +127,18 @@ async def random_track(ctx):
 @bot.command()
 @has_permissions(administrator=True)
 async def change_time(ctx, hours, minutes):
-    hours = int(hours)
-    minutes = int(minutes)
     try:
-        if 0 <= hours <= 24 and 0 <= minutes < 60:
-            time["h"] = int(hours)
-            time["m"] = int(minutes)
-        else:
-            await ctx.send("Le format spécifié est incorrect.")
+        hours = int(hours)
+        minutes = int(minutes)
     except ValueError:
         await ctx.send("Le format spécifié est incorrect.")
-    await ctx.send(f"L'heure du message journalier a été modifiée. Désormais, le message se génèrera à {time['h']}:{time['m']}.")
+    
+    if 0 <= hours <= 24 and 0 <= minutes < 60:
+            time["h"] = hours
+            time["m"] = minutes
+            await ctx.send(f"L'heure du message journalier a été modifiée. Désormais, le message se génèrera à {time['h']} heure(s) et {time['m']} minute(s).")
+    else:
+        await ctx.send("Le format spécifié est incorrect.")
 
 @change_time.error
 async def change_time_error(ctx, error):
@@ -146,7 +147,7 @@ async def change_time_error(ctx, error):
 
 @bot.command()
 async def get_time(ctx):
-    await ctx.send(f"Le message du jour s'envoie à {time["h"]}heure(s) et{time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
+    await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
 
 
 bot.run(BOT_TOKEN)
