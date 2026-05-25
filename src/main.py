@@ -2,7 +2,7 @@ import discord, os, db, spotify
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks, has_permissions, CheckFailure
 
 load_dotenv()
 
@@ -14,6 +14,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix = '!', intents=intents)
+time = { "h" : 10, "m" : 0 }
 
 
 async def daily_track():
@@ -28,7 +29,7 @@ async def daily_track():
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
     now = datetime.now(TIME_ZONE)
-    if now.hour == 10 and now.minute == 0:
+    if now.hour == time["h"] and now.minute == time["m"]:
         await daily_track()
 
 
@@ -121,6 +122,28 @@ async def random_track(ctx):
             await ctx.send(track)
     else:
         await ctx.send("Token inaccessible. Assure-toi que tu as bien lié ton compte Spotify au bot avec la commande !link")
+        
+@bot.command()
+@has_permissions(administrator=True)
+async def change_time(ctx, hours, minutes):
+    try:
+        if 0 < hours < 24 and 0 < minutes < 59:
+            time["h"] = int(hours)
+            time["m"] = int(minutes)
+        else:
+            await ctx.send("Le format spécifié est incorrect.")
+    except ValueError:
+        await ctx.send("Le format spécifié est incorrect.")
+    await ctx.send(f"L'heure du message journalier a été modifiée. Désormais, le message se génèrera à {time["h"]}:{time["m"]}.")
+
+@change_time.error
+async def change_time_error(ctx, error):
+    if isinstance(error, CheckFailure):  
+        await ctx.send("Tu n'as pas les permissions pour faire cela")
+
+@bot.command()
+async def get_time(ctx):
+    await ctx.send(f"Le message du jour s'envoie à {time["h"]}:{time["m"]}(heure {TIME_ZONE})")
 
 
 bot.run(BOT_TOKEN)
