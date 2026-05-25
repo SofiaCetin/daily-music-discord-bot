@@ -23,7 +23,7 @@ async def daily_track():
     return None
 
 
-@tasks.loop(time=time(hour=5, minute=21))
+@tasks.loop(time=time.time(hour=5, minute=24))
 async def check_scheduled_time():
     await daily_track()
 
