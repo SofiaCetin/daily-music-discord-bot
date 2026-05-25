@@ -17,7 +17,7 @@ bot = commands.Bot(command_prefix = '!', intents=intents)
 
 
 async def daily_track():
-    channel = bot.get_channel(CHANNEL_TO_SEND_DAILY)
+    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
     random_user_id = db.select_random_w_playlist()
     random_track = spotify.get_random_track(random_user_id)
     if random_user_id and random_track:
@@ -28,7 +28,7 @@ async def daily_track():
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
     now = datetime.now(TIME_ZONE)
-    if now.hour == 5 and now.minute == 58:
+    if now.hour == 6 and now.minute == 3:
         await daily_track()
 
 
