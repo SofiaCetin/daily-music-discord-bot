@@ -1,28 +1,28 @@
-import requests, os, datetime, db
+import requests, os, datetime
 from flask import Flask, request, jsonify
-from dotenv import load_dotenv
+import db
 
-# Initialisation des variables d'environnement
-
-load_dotenv()
+# Variables d'environnement
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 APP_SECRET = os.getenv("APP_SECRET")
 PORT = os.getenv("PORT")
-
-# Liens
-
 REDIRECT_URL = os.getenv("REDIRECT_URL")
+
+# Liens Spotify
+
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
+
+# Initialisation du serveur et de la base de données
 
 app = Flask(__name__)
 app.secret_key = APP_SECRET
 
 db.db_init()
 
-# Routes
+# Chemins
     
 @app.route('/')
 def index():

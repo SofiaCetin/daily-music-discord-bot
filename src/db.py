@@ -1,7 +1,11 @@
 import psycopg2
 import os
 
+# Variables d'environnement
+
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Connection et initialisation de la base de données
 
 def connect():
     return psycopg2.connect(DATABASE_URL)
@@ -26,6 +30,8 @@ def db_init():
     conn.commit()
     cur.close()
     conn.close()
+
+# Fonctions
 
 def save_state(discord_id,state):
     conn = connect()
