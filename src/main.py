@@ -29,7 +29,7 @@ async def daily_track():
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
     now = datetime.now(TIME_ZONE)
-    if now.hour == 5 and now.hour == 41:
+    if now.hour == 5 and now.minute == 46:
         await daily_track()
 
 
