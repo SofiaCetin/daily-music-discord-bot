@@ -34,7 +34,7 @@ Afin de ne pas continuellement demander des tokens, nous venons stocker celui-ci
 
 Pour se concentrer plus sur la partie façade que back-end, le coeur de ce projet est un bot Discord avec lequel les utilisateurs peuvent interagir. Nous avons donc à notre disposition, une série de commandes possibles. Les commandes s'effectuent dans les canaux textuels du serveur avec le préfixe "!".
 
-##### Commandes générales:
+#### Commandes générales:
 
 <details>
 <summary><u>!link</u></summary>
@@ -135,7 +135,7 @@ Permet de voir à quelle heure le bot envoie le message journalier.
 
 </details>
 
-##### Commandes administrateur:
+#### Commandes administrateur:
 
 <details>
 <summary><u>!change_time</u></summary>
