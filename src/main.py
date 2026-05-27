@@ -1,11 +1,9 @@
-import discord, os, db, spotify
+import discord, os
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure
-
-load_dotenv()
+import db, spotify
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_TO_SEND_DAILY = os.getenv("CHANNEL_ID")
@@ -19,16 +17,31 @@ time = { "h" : 10, "m" : 0 }
 
 
 async def daily_track():
+    """
+
+    Retourne le titre aléatoire d'un utilisateur aléatoire.
+
+    Returns:
+        string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné.
+        None: Aucun utilisateur n'existe dans la base de données.
+    """
     channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
     random_user_id = db.select_random_w_playlist()
     random_track = spotify.get_random_track(random_user_id)
-    if random_user_id and random_track:
+    if random_user_id and random_track and channel:
         await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}")
-    return None
+    else:
+        return None
 
 
 @tasks.loop(minutes=1)
 async def check_scheduled_time():
+    """
+
+    Boucle en arrière plan pour vérifier l'heure actuelle et exécuter
+    daily_track() si l'heure est égale a l'heure enregistrée.
+
+    """
     now = datetime.now(TIME_ZONE)
     if now.hour == time["h"] and now.minute == time["m"]:
         await daily_track()
@@ -36,6 +49,11 @@ async def check_scheduled_time():
 
 @bot.event
 async def on_ready():
+    """
+
+    Fonction de démarrage du bot
+
+    """
     check_scheduled_time.start()
     db.db_init()
     print(f'Bot en ligne: {bot.user}')
@@ -43,6 +61,18 @@ async def on_ready():
 
 @bot.command()
 async def link(ctx):
+    """
+
+    Envoie un lien Spotify de liaison à l'utilisateur qui a exécuté la commande.
+    Utilisation: !link
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    
+    Returns:
+        message(string): message dans le canal en fonction de la réponse.
+    
+    """
     user_id_str = str(ctx.author.id)
     try:
         access_token = db.get_access_token(user_id_str)
@@ -58,6 +88,16 @@ async def link(ctx):
 
 @bot.command()
 async def register_playlist(ctx, playlist_id):
+    """
+
+    Enregistre la playlist spécifiée dans la base de données.
+    Utilisation: !register_playlist PLAYLIST_ID
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        playlist_id (string): L'ID de la playlist
+    
+    """
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
@@ -75,6 +115,16 @@ async def register_playlist(ctx, playlist_id):
 
 @bot.command()
 async def change_playlist(ctx, playlist_id):
+    """
+
+    Change notre playlist enregistrée dans la base de données.
+    Utilisation: !change_playlist PLAYLIST_ID
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        playlist_id (string): L'ID de la playlist
+
+    """
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
@@ -89,6 +139,15 @@ async def change_playlist(ctx, playlist_id):
 
 @bot.command()
 async def my_playlist_info(ctx):
+    """
+
+    Obtenir les informations de la playlist qu'on a enregistrée.
+    Utilisation: !my_playlist_info
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+
+    """
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
@@ -101,6 +160,14 @@ async def my_playlist_info(ctx):
 
 @bot.command()
 async def remove_playlist(ctx):
+    """
+
+    Enlever sa playlist de la base de données.
+    Utilisation: !remove_playlist
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    """
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
@@ -113,6 +180,15 @@ async def remove_playlist(ctx):
  
 @bot.command()
 async def random_track(ctx):
+    """
+
+    Obtenir un titre aléatoire de la playlist qu'on a enregistrée.
+    Utilisation: !random_track
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+
+    """
     user_id_str = str(ctx.author.id)
     access_token = db.get_access_token(user_id_str)
     if access_token:
@@ -127,6 +203,16 @@ async def random_track(ctx):
 @bot.command()
 @has_permissions(administrator=True)
 async def change_time(ctx, hours, minutes):
+    """
+
+    Permet de changer l'heure et la minute à laquelle le bot va envoyer le message journalier.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        hours (string): L'heure en nombres
+        minutes (string): Les minutes en nombres
+
+    """
     try:
         hours = int(hours)
         minutes = int(minutes)
@@ -142,11 +228,26 @@ async def change_time(ctx, hours, minutes):
 
 @change_time.error
 async def change_time_error(ctx, error):
+    """
+
+    Vérifications des permissions de l'utilisateur qui effectue la commande de changement d'heure.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        error (): erreur lorsque l'utilisateur n'est pas administrateur.
+    """
     if isinstance(error, CheckFailure):  
         await ctx.send("Tu n'as pas les permissions pour faire cela")
 
 @bot.command()
 async def get_time(ctx):
+    """
+
+    Obtenir le temps enregistré pour le message journalier.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    """
     await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
 
 
