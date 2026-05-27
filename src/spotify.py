@@ -1,5 +1,4 @@
-import random, requests, datetime, os, base64, urllib, uuid
-import db
+import random, requests, datetime, os, base64, urllib, uuid, db
 
 # Variables d'environnement
 
@@ -39,6 +38,26 @@ def link_user(user_id):
     return auth_URL
 
 # Requêtes
+
+def request_token(code, discord_id):
+    req_body = {
+        "code" : code,
+        "grant_type" : "authorization_code",
+        "redirect_uri" : REDIRECT_URL,
+        "client_id" : CLIENT_ID,
+        "client_secret" : CLIENT_SECRET
+    }
+
+    response = requests.post(TOKEN_URL,data=req_body)
+    token_info = response.json()
+    if len(token_info) == 0 or "error" in token_info:
+        return "Connection error"
+    
+    db.add_new_refresh_token(discord_id, token_info["refresh_token"])
+    db.add_new_token(discord_id, token_info["access_token"], datetime.datetime.now().timestamp() + token_info["expires_in"])
+    db.delete_state(discord_id)
+    
+    return "State Valid"
 
 def check_playlist(user_id, playlist_id):
     """

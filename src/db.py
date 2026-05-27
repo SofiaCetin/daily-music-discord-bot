@@ -1,5 +1,4 @@
-import psycopg2
-import os
+import psycopg2, os
 
 # Variables d'environnement
 
@@ -46,6 +45,36 @@ def save_state(discord_id,state):
     conn.commit()
     cur.close()
     conn.close()
+    
+def user_exists(discord_id):
+    conn = connect()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT *
+        FROM linked_users
+        WHERE discord_id = %s    
+    """, (discord_id, ))
+    
+    row = cur.fetchone
+    cur.close()
+    conn.close()
+    if row:
+        return True
+    else:
+        return False
+
+def remove_user(discord_id):
+    conn = connect()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        DELETE FROM linked_users
+        WHERE discord_id = %s    
+    """, (discord_id, ))
+    
+    cur.close()
+    conn.close()
 
 def check_state_exists(state):
     conn = connect()
@@ -56,11 +85,11 @@ def check_state_exists(state):
         FROM linked_users
         WHERE state = %s
     """, (state,))
-    ligne = cur.fetchone()
+    row = cur.fetchone()
     cur.close()
     conn.close()
-    if ligne:
-        discord_id = ligne[0]
+    if row:
+        discord_id = row[0]
         return discord_id
     else:
         return None
@@ -68,11 +97,13 @@ def check_state_exists(state):
 def get_token_expiration(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         SELECT expires_at
         FROM linked_users
         WHERE discord_id = %s
 """, (discord_id, ))
+    
     res = cur.fetchone()
     cur.close()
     conn.close()
@@ -84,11 +115,13 @@ def get_token_expiration(discord_id):
 def get_refresh_token(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         SELECT refresh_token 
         FROM linked_users 
         WHERE discord_id = %s
     """,(discord_id,))
+    
     res = cur.fetchone()
     cur.close()
     conn.close()
@@ -100,11 +133,13 @@ def get_refresh_token(discord_id):
 def get_access_token(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         SELECT access_token
         FROM linked_users
         WHERE discord_id = %s
     """, (discord_id,))
+    
     res = cur.fetchone()
     cur.close()
     conn.close()
@@ -116,11 +151,13 @@ def get_access_token(discord_id):
 def add_new_refresh_token(discord_id, refresh_token):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET refresh_token = %s
         WHERE discord_id = %s
 """,(refresh_token, discord_id))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -129,11 +166,13 @@ def add_new_refresh_token(discord_id, refresh_token):
 def add_new_token(discord_id, access_token, expires_at):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET access_token = %s, expires_at = %s
         WHERE discord_id = %s          
     """, (access_token ,expires_at ,discord_id))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -141,11 +180,13 @@ def add_new_token(discord_id, access_token, expires_at):
 def delete_state(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET state = NULL
         WHERE discord_id = %s
 """, (discord_id, ))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -153,11 +194,13 @@ def delete_state(discord_id):
 def save_playlist(discord_id, playlist_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET playlist_id = %s
         WHERE discord_id = %s
 """, (playlist_id, discord_id))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -165,11 +208,13 @@ def save_playlist(discord_id, playlist_id):
 def check_if_playlist(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         SELECT playlist_id
         FROM linked_users
         WHERE discord_id = %s
     """, (discord_id, ))
+    
     res = cur.fetchone()
     cur.close()
     conn.close()
@@ -181,11 +226,13 @@ def check_if_playlist(discord_id):
 def clear_playlist(discord_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET playlist_id = NULL
         WHERE discord_id = %s
     """, (discord_id, ))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -193,11 +240,13 @@ def clear_playlist(discord_id):
 def replace_playlist(discord_id, playlist_id):
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         UPDATE linked_users
         SET playlist_id = %s
         WHERE discord_id = %s
     """, (playlist_id, discord_id))
+    
     conn.commit()
     cur.close()
     conn.close()
@@ -205,12 +254,14 @@ def replace_playlist(discord_id, playlist_id):
 def select_random_w_playlist():
     conn = connect()
     cur = conn.cursor()
+    
     cur.execute("""
         SELECT discord_id
         FROM linked_users
         WHERE playlist_id IS NOT null
         ORDER BY RANDOM() LIMIT 1
     """)
+    
     res = cur.fetchone()
     cur.close()
     conn.close()

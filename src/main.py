@@ -1,9 +1,8 @@
-import discord, os
+import discord, os, db, spotify
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure
-import db, spotify
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_TO_SEND_DAILY = os.getenv("CHANNEL_ID")
@@ -84,7 +83,23 @@ async def link(ctx):
             await ctx.send("Je t'ai envoyé en message privé le lien pour lier ton compte Spotify ! Le lien expire au bout de 2 minutes. Ne le partage à personne.")
     except discord.Forbidden:
         await ctx.send("Je ne peux pas t'envoyer de messages en privé. Vérifie tes paramètres de confidentialité")
+        
+@bot.command()
+async def unlink(ctx):
+    """
+    
+    Retire l'utilisateur et toutes ses informations(tokens et ID de playlist) de la base de données.
 
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    
+    """
+    user_id_str = str(ctx.author.id)
+    if db.user_exists(user_id_str):
+        db.remove_user(user_id_str)
+        await ctx.send("Tes informations ont bien été supprimées de la base de données. Si tu voudras à nouveau pouvoir sauvegarder ta playlist, tu devras refaire la commande !link.")
+    else:
+        await ctx.send("Aucune donnée n'a été trouvée pour ton compte.")
 
 @bot.command()
 async def register_playlist(ctx, playlist_id):
