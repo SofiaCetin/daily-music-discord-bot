@@ -73,6 +73,7 @@ def remove_user(discord_id):
         WHERE discord_id = %s    
     """, (discord_id, ))
     
+    conn.commit()
     cur.close()
     conn.close()
 
