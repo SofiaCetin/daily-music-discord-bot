@@ -95,7 +95,8 @@ async def unlink(ctx):
     
     """
     user_id_str = str(ctx.author.id)
-    if db.user_exists(user_id_str):
+    access_token = db.get_access_token(user_id_str)
+    if access_token:
         db.remove_user(user_id_str)
         await ctx.send("Tes informations ont bien été supprimées de la base de données. Si tu voudras à nouveau pouvoir sauvegarder ta playlist, tu devras refaire la commande !link.")
     else:

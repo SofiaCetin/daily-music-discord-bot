@@ -45,24 +45,6 @@ def save_state(discord_id,state):
     conn.commit()
     cur.close()
     conn.close()
-    
-def user_exists(discord_id):
-    conn = connect()
-    cur = conn.cursor()
-    
-    cur.execute("""
-        SELECT *
-        FROM linked_users
-        WHERE discord_id = %s    
-    """, (discord_id, ))
-    
-    row = cur.fetchone
-    cur.close()
-    conn.close()
-    if row:
-        return True
-    else:
-        return False
 
 def remove_user(discord_id):
     conn = connect()
