@@ -64,12 +64,13 @@ async def setup_hook():
     Fonction de démarrage du bot
 
     """
-    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
+    channel = await bot.fetch_channel(int(CHANNEL_TO_SEND_DAILY))
 
     check_scheduled_time.start()
     db.db_init()
     print(f'Bot en ligne: {bot.user}')
-    await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
+    if channel:
+        await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
 
 
 @bot.command()
