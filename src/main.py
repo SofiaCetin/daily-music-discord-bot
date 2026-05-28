@@ -31,7 +31,7 @@ async def daily_track():
         random_user_id = db.select_random_w_playlist()
         while random_user_id == previous_roll_id:
             random_user_id = db.select_random_w_playlist()
-            random_track = spotify.get_random_track(random_user_id)
+        random_track = spotify.get_random_track(random_user_id)
         previous_roll_id = random_user_id
         await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}")
 
@@ -283,4 +283,5 @@ async def get_time(ctx):
     await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
 
 
+bot.setup_hook = setup_hook()
 bot.run(BOT_TOKEN)
