@@ -283,5 +283,5 @@ async def get_time(ctx):
     await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
 
 
-bot.setup_hook = setup_hook()
+bot.setup_hook = setup_hook
 bot.run(BOT_TOKEN)
