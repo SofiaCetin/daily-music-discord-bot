@@ -266,7 +266,7 @@ async def get_time(ctx):
     Args:
         ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
     """
-    await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
+    await ctx.send(f"Le message du jour s'envoie à {time['h']} heure(s) et {time['m']} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
     
 @bot.command()
 @has_permissions(administrator=True)
@@ -276,8 +276,8 @@ async def force_daily(ctx):
     Commande administrateur pour forcer le message quotidien.
 
     """
-    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
-    await ctx.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist()} \n Daily message try(in the channel specified) ")
+    playlist_nb = db.nb_with_playlist()
+    await ctx.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {playlist_nb} \n Daily message try(in the channel specified) ")
     await daily_track()
 
 @force_daily.error
