@@ -69,9 +69,7 @@ async def setup_hook():
     check_scheduled_time.start()
     db.db_init()
     print(f'Bot en ligne: {bot.user}')
-
-    if channel:
-        await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
+    await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
 
 
 @bot.command()
