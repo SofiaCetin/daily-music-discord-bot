@@ -25,6 +25,8 @@ async def daily_track():
         string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné, ou message "aucune playlist enregistrée".
     """
 
+    global previous_roll_id
+
     channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
 
     if db.nb_with_playlist() > 1:
@@ -276,8 +278,9 @@ async def force_daily(ctx):
     Commande administrateur pour forcer le message quotidien.
 
     """
-    playlist_nb = db.nb_with_playlist()
-    await ctx.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {playlist_nb} \n Daily message try(in the channel specified) ")
+    global previous_roll_id
+    
+    await ctx.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist()} \n Daily message try(in the channel specified) ")
     await daily_track()
 
 @force_daily.error
