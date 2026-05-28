@@ -257,6 +257,43 @@ async def change_time(ctx, hours, minutes):
     else:
         await ctx.send("Le format spécifié est incorrect.")
 
+@bot.command()
+async def get_time(ctx):
+    """
+
+    Obtenir le temps enregistré pour le message journalier.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    """
+    await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
+    
+@bot.command()
+@has_permissions(administrator=True)
+async def force_daily():
+    """
+
+    Commande administrateur pour forcer le message quotidien.
+
+    """
+    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
+    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Daily message: ")
+    daily_track()
+
+@force_daily.error
+async def force_daily_error(ctx, error):
+    """
+
+    Vérifications des permissions de l'utilisateur qui effectue la commande du message quotidien.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        error (): erreur lorsque l'utilisateur n'est pas administrateur.
+    """
+    if isinstance(error, CheckFailure):  
+        await ctx.send("Tu n'as pas les permissions pour faire cela")
+
+
 @change_time.error
 async def change_time_error(ctx, error):
     """
@@ -269,17 +306,6 @@ async def change_time_error(ctx, error):
     """
     if isinstance(error, CheckFailure):  
         await ctx.send("Tu n'as pas les permissions pour faire cela")
-
-@bot.command()
-async def get_time(ctx):
-    """
-
-    Obtenir le temps enregistré pour le message journalier.
-
-    Args:
-        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
-    """
-    await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
 
 
 bot.setup_hook = setup_hook
