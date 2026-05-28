@@ -277,7 +277,7 @@ async def force_daily():
 
     """
     channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
-    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Daily message: ")
+    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist} \n Daily message try: ")
     daily_track()
 
 @force_daily.error
