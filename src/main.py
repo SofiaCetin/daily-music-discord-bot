@@ -27,7 +27,7 @@ async def daily_track():
 
     global previous_roll_id
 
-    channel = bot.fetch_channel(int(CHANNEL_TO_SEND_DAILY))
+    channel = await bot.fetch_channel(int(CHANNEL_TO_SEND_DAILY))
 
     if db.nb_with_playlist() > 1:
         random_user_id = db.select_random_w_playlist()
@@ -280,7 +280,9 @@ async def force_daily(ctx):
     """
     global previous_roll_id
 
-    await ctx.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist()} \n Daily message try(in the channel specified) ")
+    channel = await bot.fetch_channel(CHANNEL_TO_SEND_DAILY)
+
+    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \nTotal users registered with playlists: {db.nb_with_playlist()} \nDaily message try(in the channel specified) ")
     await daily_track()
 
 @force_daily.error
