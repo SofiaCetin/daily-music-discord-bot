@@ -13,24 +13,36 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix = '!', intents=intents)
 time = { "h" : 10, "m" : 0 }
+previous_roll_id = None
 
 
 async def daily_track():
     """
 
-    Retourne le titre aléatoire d'un utilisateur aléatoire.
+    Retourne le titre aléatoire de la playlist d'un utilisateur aléatoire.
 
     Returns:
-        string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné.
-        None: Aucun utilisateur n'existe dans la base de données.
+        string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné, ou message "aucune playlist enregistrée".
     """
+
     channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
-    random_user_id = db.select_random_w_playlist()
-    random_track = spotify.get_random_track(random_user_id)
-    if random_user_id and random_track and channel:
+
+    if db.nb_with_playlist() > 1:
+        random_user_id = db.select_random_w_playlist()
+        while random_user_id == previous_roll_id:
+            random_user_id = db.select_random_w_playlist()
+            random_track = spotify.get_random_track(random_user_id)
+        previous_roll_id = random_user_id
         await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}")
+
+    elif db.nb_with_playlist() == 1:
+        random_user_id = db.select_random_w_playlist()
+        random_track = spotify.get_random_track(random_user_id)
+        previous_roll_id = random_user_id
+        await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}. (Seul utilisateur enregistré.)")
+    
     else:
-        return None
+        await channel.send(f"Aucune playlist trouvée pour le son du jour.")
 
 
 @tasks.loop(minutes=1)
@@ -46,16 +58,20 @@ async def check_scheduled_time():
         await daily_track()
 
 
-@bot.event
-async def on_ready():
+async def setup_hook():
     """
 
     Fonction de démarrage du bot
 
     """
+    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
+
     check_scheduled_time.start()
     db.db_init()
     print(f'Bot en ligne: {bot.user}')
+
+    if channel:
+        await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
 
 
 @bot.command()
