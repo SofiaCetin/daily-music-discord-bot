@@ -270,15 +270,15 @@ async def get_time(ctx):
     
 @bot.command()
 @has_permissions(administrator=True)
-async def force_daily():
+async def force_daily(ctx):
     """
 
     Commande administrateur pour forcer le message quotidien.
 
     """
     channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
-    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist} \n Daily message try: ")
-    daily_track()
+    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \n Total users registered with playlists: {db.nb_with_playlist()} \n Daily message try: ")
+    await daily_track()
 
 @force_daily.error
 async def force_daily_error(ctx, error):
