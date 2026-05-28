@@ -39,7 +39,7 @@ def nb_with_playlist():
     cur.execute("""
         SELECT *
         FROM linked_users
-        WHERE playlist IS NOT null
+        WHERE playlist_id IS NOT null
         """)
     res = cur.fetchone()
     cur.close()
