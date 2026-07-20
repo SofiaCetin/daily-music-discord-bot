@@ -49,6 +49,11 @@ def request_token(code, discord_id):
     }
 
     response = requests.post(TOKEN_URL,data=req_body)
+    
+    if response.status_code != 200:
+        print(f"ERREUR\nStatus code: {response.status_code}\nDescription: {response.text}")
+        return None
+    
     token_info = response.json()
     if len(token_info) == 0 or "error" in token_info:
         return "Connection error"
@@ -88,6 +93,10 @@ def check_playlist(user_id, playlist_id):
         API_BASE_URL + f"playlists/{playlist_id}/items?limit=1",
         headers=headers
     )
+    
+    if response.status_code != 200:
+        print(f"ERREUR\nStatus code: {response.status_code}\nDescription: {response.text}")
+        return None
 
     data = response.json()
 
@@ -127,6 +136,10 @@ def get_random_track(user_id):
         API_BASE_URL + f"playlists/{playlist}/items?limit=1",
         headers=headers
     )
+    
+    if response.status_code != 200:
+        print(f"ERREUR\nStatus code: {response.status_code}\nDescription: {response.text}")
+        return None
 
     data = response.json()
     if len(data) == 0 or "error" in data:
@@ -139,8 +152,13 @@ def get_random_track(user_id):
         API_BASE_URL + f"playlists/{playlist}/items?limit=1&offset={rand_i}",
         headers=headers
     )
+    
+    if response.status_code != 200:
+        print(f"ERREUR\nStatus code: {response.status_code}\nDescription: {response.text}")
+        return None
 
     data = response.json()
+    
     if len(data) == 0 or "error" in data:
         return None
 
@@ -177,8 +195,10 @@ def refresh_token(user_id):
     }
 
     response = requests.post(TOKEN_URL, data=req_body, headers=headers)
+    
     if response.status_code != 200:
-        return {"error": f"Spotify API error: {response.status_code}"}
+        print(f"ERREUR\nStatus code: {response.status_code}\nDescription: {response.text}")
+        return None
     
     new_token_info = response.json()
     expires_at = datetime.datetime.now().timestamp() + new_token_info["expires_in"]
