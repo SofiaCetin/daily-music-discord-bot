@@ -32,6 +32,23 @@ def db_init():
 
 # Fonctions
 
+def nb_with_playlist():
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT *
+        FROM linked_users
+        WHERE playlist_id IS NOT null
+        """)
+    res = cur.fetchone()
+    cur.close()
+    conn.close()
+    if res:
+        return len(res)
+    else:
+        return 0
+
 def save_state(discord_id,state):
     conn = connect()
     cur = conn.cursor()

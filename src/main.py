@@ -13,24 +13,38 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix = '!', intents=intents)
 time = { "h" : 10, "m" : 0 }
+previous_roll_id = None
 
 
 async def daily_track():
     """
 
-    Retourne le titre aléatoire d'un utilisateur aléatoire.
+    Retourne le titre aléatoire de la playlist d'un utilisateur aléatoire.
 
     Returns:
-        string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné.
-        None: Aucun utilisateur n'existe dans la base de données.
+        string: Message contenant le titre et l'utilisateur choisi aléatoirement, dans le canal désigné, ou message "aucune playlist enregistrée".
     """
-    channel = bot.get_channel(int(CHANNEL_TO_SEND_DAILY))
-    random_user_id = db.select_random_w_playlist()
-    random_track = spotify.get_random_track(random_user_id)
-    if random_user_id and random_track and channel:
+
+    global previous_roll_id
+
+    channel = await bot.fetch_channel(int(CHANNEL_TO_SEND_DAILY))
+
+    if db.nb_with_playlist() > 1:
+        random_user_id = db.select_random_w_playlist()
+        while random_user_id == previous_roll_id:
+            random_user_id = db.select_random_w_playlist()
+        random_track = spotify.get_random_track(random_user_id)
+        previous_roll_id = random_user_id
         await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}")
+
+    elif db.nb_with_playlist() == 1:
+        random_user_id = db.select_random_w_playlist()
+        random_track = spotify.get_random_track(random_user_id)
+        previous_roll_id = random_user_id
+        await channel.send(f"Le son du jour vient de la playlist de <@{random_user_id}> ! Le son choisi est: \n {random_track}. (Seul utilisateur enregistré.)")
+    
     else:
-        return None
+        await channel.send(f"Aucune playlist trouvée pour le son du jour.")
 
 
 @tasks.loop(minutes=1)
@@ -46,16 +60,19 @@ async def check_scheduled_time():
         await daily_track()
 
 
-@bot.event
-async def on_ready():
+async def setup_hook():
     """
 
     Fonction de démarrage du bot
 
     """
+    channel = await bot.fetch_channel(int(CHANNEL_TO_SEND_DAILY))
+
     check_scheduled_time.start()
     db.db_init()
     print(f'Bot en ligne: {bot.user}')
+    if channel:
+        await channel.send("Bot en ligne. Le message du jour s'enverra ici.")
 
 
 @bot.command()
@@ -242,6 +259,46 @@ async def change_time(ctx, hours, minutes):
     else:
         await ctx.send("Le format spécifié est incorrect.")
 
+@bot.command()
+async def get_time(ctx):
+    """
+
+    Obtenir le temps enregistré pour le message journalier.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+    """
+    await ctx.send(f"Le message du jour s'envoie à {time['h']} heure(s) et {time['m']} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
+    
+@bot.command()
+@has_permissions(administrator=True)
+async def force_daily(ctx):
+    """
+
+    Commande administrateur pour forcer le message quotidien.
+
+    """
+    global previous_roll_id
+
+    channel = await bot.fetch_channel(CHANNEL_TO_SEND_DAILY)
+
+    await channel.send(f"[DEBUG USAGE]\n \nPrevious user: {previous_roll_id} \nTotal users registered with playlists: {db.nb_with_playlist()} \nDaily message try(in the channel specified) ")
+    await daily_track()
+
+@force_daily.error
+async def force_daily_error(ctx, error):
+    """
+
+    Vérifications des permissions de l'utilisateur qui effectue la commande du message quotidien.
+
+    Args:
+        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
+        error (): erreur lorsque l'utilisateur n'est pas administrateur.
+    """
+    if isinstance(error, CheckFailure):  
+        await ctx.send("Tu n'as pas les permissions pour faire cela")
+
+
 @change_time.error
 async def change_time_error(ctx, error):
     """
@@ -255,16 +312,6 @@ async def change_time_error(ctx, error):
     if isinstance(error, CheckFailure):  
         await ctx.send("Tu n'as pas les permissions pour faire cela")
 
-@bot.command()
-async def get_time(ctx):
-    """
 
-    Obtenir le temps enregistré pour le message journalier.
-
-    Args:
-        ctx (contexte): informations pour indiquer quel utilisateur a exécuté la commande et dans quel canal.
-    """
-    await ctx.send(f"Le message du jour s'envoie à {time["h"]} heure(s) et {time["m"]} minute(s) -> Fuseau horaire: {TIME_ZONE}.")
-
-
+bot.setup_hook = setup_hook
 bot.run(BOT_TOKEN)
