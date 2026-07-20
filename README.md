@@ -166,6 +166,8 @@ Si vous souhaitez utiliser ce bot sur votre serveur, il vous faudra donc déploy
 
 Pour créer une application Spotify, rendez-vous sur le [portail des développeurs](https://developer.spotify.com/).
 
+*Notez qu'un abonnement Spotify Premium est requis pour pouvoir effectuer des requêtes avec votre application.*
+
 Indiquez le nom et la description de votre application. Quant à l'URL de redirection, celle-ci va dépendre de si vous hébergez votre projet localement ou sur un serveur distant.
 
 Si vous hébergez votre projet localement, vous pouvez mettre l'adresse locale et la route callback qui sera crée dans le code source, par exemple:
