@@ -41,7 +41,7 @@ def nb_with_playlist():
         FROM linked_users
         WHERE playlist_id IS NOT null
         """)
-    res = cur.fetchone()
+    res = cur.fetchall()
     cur.close()
     conn.close()
     if res:
