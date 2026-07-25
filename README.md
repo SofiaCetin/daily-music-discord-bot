@@ -169,7 +169,7 @@ Prototype:
 !force_daily
 ```
 
-Force le message journalier, et affiche le dernier utilisateur qui a été choisi ainsi que le nombre d'utilisateurs avec une playlist enregistrés.
+Force le message journalier, et affiche le dernier utilisateur qui a été choisi ainsi que le nombre d'utilisateurs avec une playlist enregistrée.
 
 </details>
 
