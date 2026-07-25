@@ -100,6 +100,18 @@ Permet à l'utilisateur d'obtenir les informations de la playlist qu'il a enregi
 </details>
 
 <details>
+<summary><u>!random_track</u></summary>
+
+Prototype:
+```
+!random_track
+```
+
+Tire aléatoirement une musique dans la playlist de l'utilisateur.
+
+</details>
+
+<details>
 <summary><u>!remove_playlist</u></summary>
 
 Prototype:
@@ -147,6 +159,17 @@ Prototype:
 
 Permet de changer l'heure à laquelle le bot envoie le message journalier, à condition que
 l'utilisateur qui a effectué la commande ait les permissions administrateur sur le serveur.
+
+</details>
+<details>
+<summary><u>!force_daily</u></summary>
+
+Prototype:
+```
+!force_daily
+```
+
+Force le message journalier, et affiche le dernier utilisateur qui a été choisi ainsi que le nombre d'utilisateurs avec une playlist enregistrés.
 
 </details>
 
